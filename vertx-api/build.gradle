@@ -1,0 +1,16 @@
+apply plugin: 'kotlin'
+apply plugin: 'application'
+
+mainClassName = "dev.yn.playground.ui.AppKt"
+
+dependencies {
+
+    compile 'org.jetbrains.kotlinx:kotlinx-html-jvm:0.6.3'
+    compile project(':vertx-base'), project(':order')
+}
+
+run {
+    systemProperties = [
+            'profile': 'local'
+    ]
+}

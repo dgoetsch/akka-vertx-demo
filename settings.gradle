@@ -1,0 +1,2 @@
+include 'cassandra', 'event-log', 'vertx-base', 'order', 'vertx-api', 'akka-base', 'cmd-interface'
+rootProject.name = "akka-vertx"

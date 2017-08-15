@@ -1,0 +1,10 @@
+*/build/
+*/.vertx/
+build/
+.idea/
+*.iml
+*.ipa
+gradle/
+*/gradle/
+.gradle/
+*/.gradle/

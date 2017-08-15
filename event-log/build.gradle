@@ -1,0 +1,7 @@
+apply plugin: 'kotlin'
+
+dependencies {
+  compile project(':cassandra')
+  compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+  compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+}

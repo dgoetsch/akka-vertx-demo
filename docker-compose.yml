@@ -1,0 +1,34 @@
+version: '2'
+services:
+  # image-injest:
+  #   image: dev.yn/uuid-uniqueness-proof:0.0.1
+  #   links:
+  #     - cassandra
+  #   ports:
+  #     - "8080:8080"
+  #   networks:
+  #     all:
+  #       aliases:
+  #         - image-injest
+  #   environment:
+  #     ENVIRONMENT: local
+  cassandra:
+    image: cassandra:3.10
+    ports:
+      - "9042:9042"
+    expose:
+      - 9042
+      # - 7000
+      # - 7001
+      # - 7199
+      # - 9160
+    networks:
+      - all
+    # volumes:
+    #   - ./conf/cassandra:/etc/cassandra
+    environment:
+      MAX_HEAP_SIZE: 2G
+      HEAP_NEWSIZE: 256M
+networks:
+  all:
+    driver: bridge
