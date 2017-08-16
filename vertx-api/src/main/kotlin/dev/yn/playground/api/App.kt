@@ -226,7 +226,7 @@ class OrderAggregateeVerticle(val eventService: AsynchronousAggregatedEventServi
                     println("${workerNumber} aggregating for ${id.body()}")
                     eventService.eventRepository.getLatest(id.body())
                             ?.let(eventService::processLoggedEvent)
-                            ?.let { eventService.getEventHistory(id.body()).right().getOrElse { null } }
+                            ?.let { vertx.eventBus().send(OrderEntityServiceEvents.BroadcastUpdate, id.body()) }
                 }
     }
 }
@@ -253,7 +253,7 @@ class BroadcastUpdateManagementVerticle(val entityService: OrderEntityService, v
 class BroadcastUpdateWorkerVerticle(val entityService: OrderEntityService, val mapper: ObjectMapper, val workerNumber: Int): AbstractVerticle() {
     override fun start() {
         vertx.eventBus()
-                .consumer<UUID>(OrderEntityServiceEvents.AggregateEvent + ".$workerNumber") { message ->
+                .consumer<UUID>(OrderEntityServiceEvents.BroadcastUpdate + ".$workerNumber") { message ->
                     println("${workerNumber} broadcasting for ${message.body()}")
                     entityService.getEntityHistory(message.body())
                             .right().getOrElse { null }

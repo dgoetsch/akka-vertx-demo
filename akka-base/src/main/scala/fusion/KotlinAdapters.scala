@@ -1,4 +1,4 @@
-package dev.yn.akka
+package dev.yn.fusion
 
 
 object KotlinAdapters {

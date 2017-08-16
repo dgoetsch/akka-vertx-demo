@@ -89,7 +89,7 @@ class AsynchronousAggregatedEventService(val currentAggregateRepository: dev.yn.
     override fun getEventHistory(resourceId: java.util.UUID): Either<EventError, EventHistory> {
         return currentAggregateRepository.get(resourceId)?.let { currentAggregate ->
             aggregateRepository.getLatest(resourceId)?.let { aggregatedEvent ->
-                Either.Right<EventError, EventHistory>(dev.yn.event.domain.EventHistory(eventRepository.getAfterDate(resourceId, aggregatedEvent.date), aggregatedEvent, currentAggregate))
+                Either.Right<EventError, EventHistory>(dev.yn.event.domain.EventHistory(eventRepository.getOnOrAfterDate(resourceId, aggregatedEvent.date), aggregatedEvent, currentAggregate))
             } ?: Either.Right<EventError, EventHistory>(dev.yn.event.domain.EventHistory(eventRepository.getAll(resourceId), null, currentAggregate))
         }?: Either.Right<EventError, EventHistory>(dev.yn.event.domain.EventHistory(eventRepository.getAll(resourceId), null, null))
     }

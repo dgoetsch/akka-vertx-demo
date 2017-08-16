@@ -8,6 +8,3 @@ This project demonstrates fundamental differences between akka and vert.x.
     * To run the vert.x application: `gradle vertx-api:run`
     * To run the akka application: `gradle akka-base:run`
 1. Run the command line client: `gradle cmd-interface:run`
-
-###Limitations
-The akka application does not yet have web sockets, because of this the command line client is not yet fully operational.

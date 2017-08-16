@@ -48,7 +48,10 @@ class EventRepository(val cassandraConnector: CassandraConnector) {
         return cassandraConnector.session().execute(EventCQL.getAfterDate(resourceId, earliest))
                 .map(EventCQL.rowToEvent)
     }
-
+    fun getOnOrAfterDate(resourceId: UUID, earliest: Date): List<Event> {
+        return cassandraConnector.session().execute(EventCQL.getOnOrAfterDate(resourceId, earliest))
+                .map(EventCQL.rowToEvent)
+    }
 
     fun getOnDateRs(resourceId: UUID, date: String): ResultSet {
         return cassandraConnector.session().execute(EventCQL.getOnDate(resourceId, date))
@@ -143,6 +146,13 @@ object EventCQL {
                 .orderBy(QueryBuilder.asc(DateColumn), QueryBuilder.asc(EventTimeColumn))
     }
 
+    fun getOnOrAfterDate(resourceId: UUID, earliest: Date): Select {
+        return QueryBuilder.select(ResourceIdColumn, EventTimeColumn, EventTypeColumn, UserIdColumn, BodyColumn)
+                .from(KeyspaceName, TableName)
+                .where(QueryBuilder.eq(ResourceIdColumn, resourceId))
+                .and(QueryBuilder.gte(DateColumn, dayFormat.format(earliest)))
+                .orderBy(QueryBuilder.asc(DateColumn), QueryBuilder.asc(EventTimeColumn))
+    }
     fun getBetweenDates(resourceId: UUID, earliest: Date, latest: Date): Select {
         return QueryBuilder.select(ResourceIdColumn, EventTimeColumn, EventTypeColumn, UserIdColumn, BodyColumn)
                 .from(KeyspaceName, TableName)
