@@ -1,5 +1,4 @@
-package dev.yn.fusion
-
+package dev.yn.akka
 
 object KotlinAdapters {
   implicit class FunktionaleEitherAdapter[L, R](val either: org.funktionale.either.Either[L, R]) {

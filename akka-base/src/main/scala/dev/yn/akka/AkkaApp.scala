@@ -1,4 +1,4 @@
-package dev.yn.fusion
+package dev.yn.akka
 
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
