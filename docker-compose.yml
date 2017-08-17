@@ -1,32 +1,27 @@
+#    Copyright 2017 Devyn Goetsch
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
 version: '2'
 services:
-  # image-injest:
-  #   image: dev.yn/uuid-uniqueness-proof:0.0.1
-  #   links:
-  #     - cassandra
-  #   ports:
-  #     - "8080:8080"
-  #   networks:
-  #     all:
-  #       aliases:
-  #         - image-injest
-  #   environment:
-  #     ENVIRONMENT: local
   cassandra:
     image: cassandra:3.10
     ports:
       - "9042:9042"
     expose:
       - 9042
-      # - 7000
-      # - 7001
-      # - 7199
-      # - 9160
     networks:
       - all
-    # volumes:
-    #   - ./conf/cassandra:/etc/cassandra
-    environment:
+\    environment:
       MAX_HEAP_SIZE: 2G
       HEAP_NEWSIZE: 256M
 networks:
