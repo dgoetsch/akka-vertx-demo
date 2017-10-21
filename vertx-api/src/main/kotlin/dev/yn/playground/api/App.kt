@@ -28,9 +28,8 @@ import dev.yn.restauraunt.order.aggregation.OrderAggregator
 import dev.yn.restauraunt.order.domain.OrderEvent
 import dev.yn.restauraunt.order.domain.OrderState
 import dev.yn.restauraunt.order.serialization.OrderEventSerialization
-import io.vertx.core.AbstractVerticle
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.Vertx
+import io.vertx.core.*
+import io.vertx.core.eventbus.Message
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.MessageCodec
 import io.vertx.core.http.HttpServerOptions
@@ -235,13 +234,33 @@ class OrderAggregateManagementVerticle(val eventService: AsynchronousAggregatedE
     }
 }
 
+class GenericConsumerVerticle<T> (val consumerBody: (Message<T>) -> Unit, val consumerAddress: String): AbstractVerticle() {
+    override fun start() {
+        vertx.eventBus()
+                .consumer<T>(consumerAddress, consumerBody)
+    }
+}
+
+fun <T, U> Future<T>.thenPublish(vertx: Vertx, address: String): Future<U> {
+    val future = Future.future<AsyncResult<U>>()
+    return this.compose { t ->
+        vertx.eventBus().send(address, future.completer())
+        future
+    }.compose {
+        if(it.succeeded()) {
+            Future.succeededFuture(it.result())
+        } else {
+            Future.failedFuture(it.cause())
+        }
+    }
+}
+
 class OrderAggregateeVerticle(val eventService: AsynchronousAggregatedEventService, val workerNumber: Int): AbstractVerticle() {
     override fun start() {
         vertx.eventBus()
                 .consumer<UUID>(OrderEntityServiceEvents.AggregateEvent + ".$workerNumber") { id ->
                     println("${workerNumber} aggregating for ${id.body()}")
-                    eventService.eventRepository.getLatest(id.body())
-                            ?.let(eventService::processLoggedEvent)
+                    eventService.processLoggedEvent(id.body())
                             ?.let { vertx.eventBus().send(OrderEntityServiceEvents.BroadcastUpdate, id.body()) }
                 }
     }

@@ -74,4 +74,10 @@ abstract class EntityService<State, Event: EventDomain>(val eventSerialization: 
                     .right().map { EventContainer(it, event.eventTime, event.userId) }
         }
     }
+
+    fun processLoggedEvent(resourceId: UUID): Either<EntityError, State> {
+        return eventService.processLoggedEvent(resourceId)
+                ?.let { stateSerialization.deserialize(it.body) }
+                ?:Either.Left(EntityError.NotFound(resourceId))
+    }
 }

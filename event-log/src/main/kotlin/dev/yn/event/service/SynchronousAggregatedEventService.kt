@@ -129,5 +129,5 @@ class SynchronousAggregatedEventService(val currentAggregateRepository: CurrentA
         return eventRepository.getLatest(resourceId)
     }
 
-    override fun processLoggedEvent(event: Event) {}
+    override fun processLoggedEvent(event: Event): AggregateEvent? = currentAggregateRepository.get(event.resourceId)
 }

@@ -21,7 +21,7 @@ services:
       - 9042
     networks:
       - all
-\    environment:
+    environment:
       MAX_HEAP_SIZE: 2G
       HEAP_NEWSIZE: 256M
 networks:

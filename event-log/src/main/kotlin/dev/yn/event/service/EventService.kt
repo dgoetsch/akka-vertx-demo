@@ -86,5 +86,9 @@ interface EventService {
     fun getEvents(entityId: java.util.UUID, day: java.util.Date): List<Event>
     fun getCurrentAggregate(resourceId: java.util.UUID): AggregateEvent?
     fun getLatest(resourceId: UUID): Event?
-    fun processLoggedEvent(event: Event)
+    fun processLoggedEvent(event: Event): AggregateEvent?
+    fun processLoggedEvent(resourceId: UUID): AggregateEvent? {
+        return getLatest(resourceId)
+                ?.let(this::processLoggedEvent)
+    }
 }

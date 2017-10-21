@@ -14,5 +14,5 @@
  *    limitations under the License.
  */
 
-include 'cassandra', 'event-log', 'vertx-base', 'order', 'vertx-api', 'akka-base', 'cmd-interface'
+include 'cassandra', 'event-log', 'vertx-base', 'order', 'vertx-api', 'akka-api', 'cmd-interface'
 rootProject.name = "akka-vertx"

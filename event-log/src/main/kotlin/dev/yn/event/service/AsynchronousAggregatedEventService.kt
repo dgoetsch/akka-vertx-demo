@@ -51,9 +51,9 @@ class AsynchronousAggregatedEventService(val currentAggregateRepository: dev.yn.
      * This should be called by a verticle when an event is published and possibly on regular intervals
      *
      */
-    override fun processLoggedEvent(event: dev.yn.event.domain.Event) {
+    override fun processLoggedEvent(event: dev.yn.event.domain.Event): AggregateEvent? {
         val now = java.util.Date()
-        aggregateRepository.getLatest(event.resourceId)?.let { latestAggregate ->
+        return aggregateRepository.getLatest(event.resourceId)?.let { latestAggregate ->
             val daysSinceAggregate = dev.yn.util.date.constructDayList(dev.yn.util.date.earliest(latestAggregate.date, event.eventTime), now)
             val lastAggregate = daysSinceAggregate.fold(latestAggregate) { lastAggregate, day ->
                 //We may want to do this a bit differently - i.e. load the whole day and then incorporate.
@@ -67,14 +67,15 @@ class AsynchronousAggregatedEventService(val currentAggregateRepository: dev.yn.
                 newAggregate
             }
             currentAggregateRepository.create(lastAggregate)
+            lastAggregate
         } ?: processWhenNoAggregate(event)
     }
 
     /**
      * Get all events and reaggregate for all days since the beginning of time
      */
-    private fun processWhenNoAggregate(event: dev.yn.event.domain.Event) {
-        eventRepository.getEarliest(event.resourceId)?.let { earliestEvent ->
+    private fun processWhenNoAggregate(event: dev.yn.event.domain.Event): AggregateEvent? {
+        return eventRepository.getEarliest(event.resourceId)?.let { earliestEvent ->
             val daysSinceBeginning = dev.yn.util.date.constructDayList(earliestEvent.eventTime, Date())
             val lastAggregate = daysSinceBeginning.fold(dev.yn.event.domain.AggregateEvent(event.resourceId, event.eventTime, emptyList(), emptyList(), aggregator.baseEventBytes)) { lastAggregate, day ->
                 //We may want to do this a bit differently - i.e. load the whole day and then incorporate.
@@ -88,6 +89,7 @@ class AsynchronousAggregatedEventService(val currentAggregateRepository: dev.yn.
                 newAggregate
             }
             currentAggregateRepository.create(lastAggregate)
+            lastAggregate
         }
     }
 
